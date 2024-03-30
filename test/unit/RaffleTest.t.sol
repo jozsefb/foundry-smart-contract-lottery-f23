@@ -23,6 +23,7 @@ contract RaffleTest is Test {
     uint64 private subscriptionId;
     uint32 private callbackGasLimit;
     address link;
+    uint256 deployerKey;
 
     function setUp() external {
         DeployRaffle deployer = new DeployRaffle();
@@ -34,7 +35,8 @@ contract RaffleTest is Test {
             gasLane,
             subscriptionId,
             callbackGasLimit,
-            link
+            link,
+            deployerKey
         ) = helperConfig.activeNetworkConfig();
         vm.deal(player, STARTING_BALANCE);
     }
@@ -135,7 +137,7 @@ contract RaffleTest is Test {
         // Assert
     }
 
-    function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public {
+    function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public skipWhenForking {
         uint256 currentBallance = 0;
         uint256 numPlayers = 0;
         Raffle.RaffleState raffleState = Raffle.RaffleState.OPEN;
@@ -173,16 +175,15 @@ contract RaffleTest is Test {
         assert(state == Raffle.RaffleState.CALCULATING);
     }
 
-    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEnteredAndTimePassed {
+    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEnteredAndTimePassed skipWhenForking {
         // Arrange
         vm.expectRevert("nonexistent request");
         VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(randomRequestId, address(raffle));
     }
 
-    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEnteredAndTimePassed {
+    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEnteredAndTimePassed skipWhenForking {
         // add additional entrants
         for (uint256 i = 1; i <= 5; i++) {
-            address playerx = address(uint160(i));
             hoax(player, STARTING_BALANCE);
             raffle.enterRaffle{value: entranceFee}();
         }
