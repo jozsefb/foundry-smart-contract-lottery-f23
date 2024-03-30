@@ -14,3 +14,10 @@ This code is to create a provably random smart contract lottery
     2. Chainlink automation -> Time based trigger
 
 
+## Tests
+
+1. Write some deploy scripts
+2. Write our tests
+    1. Work on local chain
+    2. Work on forked testnet
+    3. Work on forked Mainnet

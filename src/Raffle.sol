@@ -42,6 +42,7 @@ contract Raffle is VRFConsumerBaseV2 {
     /** Events */
     event EnteredRaffle(address indexed player);
     event PickedWinner(address indexed winner);
+    event RequestRaffleWinner(uint256 indexed requestId);
 
     /** Functions */
     constructor(
@@ -99,6 +100,7 @@ contract Raffle is VRFConsumerBaseV2 {
             callbackGasLimit,
             NUM_WORDS
         );
+        emit RequestRaffleWinner(requestId);
     }
 
     // CEI: Checks, Effects, Interactions
@@ -127,7 +129,23 @@ contract Raffle is VRFConsumerBaseV2 {
      * Getters & Setters
      */
 
-    function getEntranceFee() public view returns (uint256) {
+    function getEntranceFee() external view returns (uint256) {
         return entranceFee;
+    }
+
+    function getRaffleState() external view returns (RaffleState) {
+        return raffleState;
+    }
+
+    function getPlayer(uint256 index) external view returns (address) {
+        return players[index];
+    }
+
+    function getLastTimestamp() external view returns (uint256) {
+        return lastTimestamp;
+    }
+
+    function getRecentWinner() external view returns (address) {
+        return recentWinner;
     }
 }
